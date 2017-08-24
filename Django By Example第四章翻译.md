@@ -471,7 +471,7 @@ Django会在用户登出的时候展示这个模板（template）。
 
 *password_change* 视图（view）将会操作表单（form）进行修改密码，当用户成功的修改他的密码后 *password_change_done* 将会显示一条成功信息。让我们为每个视图（view）创建一个模板（template）。
 
-在你的*account*应用*templates/registration/*目录下添加一个新的文件命名为*password_form.html*，在文件中添加如下代码：
+在你的*account*应用*templates/registration/*目录下添加一个新的文件命名为*password_change_form.html*，在文件中添加如下代码：
 
     {% extends "base.html" %}
     {% block title %}Change you password{% endblock %}

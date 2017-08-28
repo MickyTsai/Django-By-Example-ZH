@@ -1144,7 +1144,7 @@ Google首先会询问你配置同意信息页面。这个页面将会展示给�
 
 * Application type： 选择**Web application**
 * Name： 输入*Bookmarks*
-* Authorized redirect URLs：输入 http://mysite.com:8000/social-auth/complete/google-oauth2/
+* Authorized redirect URLs：输入  http://mysite.com:8000/oauth/complete/google-oauth2/
 
 这表单（form）将会如下所示：
 

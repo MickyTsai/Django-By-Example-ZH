@@ -1063,7 +1063,7 @@ Django提供了一个简单的方法来定义你自己的认证（authentication
 **（译者注：以下的几种社交认证操作步骤可能已经过时，请根据实际情况操作）**
 为了让你的用户能够使用他们的Facebook账号来登录你的网站，在项目*settings.py*文件中的*AUTHENTICATION_BACKENDS*设置中添加如下内容：
 
-    'social.backends.facebook.Facebook2OAuth2',
+    'social.backends.facebook.FacebookOAuth2',
     
 为了添加Facebook的社交认证（authentication），你需要一个Facebook开发者账号，然后你必须创建一个新的Facebook应用。在浏览器中打开 https://developers.facebook.com/apps/?action=create 点击**Add new app**按钮。点击**Website**平台然后为你的应用取名为*Bookmarks*，输入 http://mysite.com:8000/ 作为你的网站URL。跟随快速开始步骤然后点击**Create App ID**。
 

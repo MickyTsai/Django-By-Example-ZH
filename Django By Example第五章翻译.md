@@ -16,7 +16,8 @@
  * 通过使用 sorl-thumbnail 来生成缩略图
  * 实现 AJAX 视图（views）并且使这些视图（views）和 jQuery 融合
  * 为视图（views）创建定制化的装饰器 （decorators）
- * 创建 AJAX 分页
+ * 创建 AJAX 分页  
+ 
 ##**建立一个能为图片打标签的网站**
 我们将允许用户可以在我们网站中分享他们在其他网站发现的图片，并且他们还可以为这些图片打上标签。为了达到这个目的，我们将要做以下几个任务：
 
@@ -35,7 +36,8 @@
         'images',
     ]
 
-现在Django知道我们的新应用已经被激活了。
+现在Django知道我们的新应用已经被激活了。  
+
 ##**创建图像模型**
 编辑 images 应用中的 `models.py`  文件，将以下代码添加进去：
 
@@ -78,7 +80,8 @@ class Image(models.Model):
             self.slug = slugify(self.title)
             super(Image, self).save(*args, **kwargs)
 ```
-在这段代码中，我们使用了 Django 提供的`slugify()`函数在没有提供`slug`字段时根据给定的图片标题自动生slug,然后，我们保存了这个对象。我们自动生成slug，这样的话用户就不用自己输入`slug`字段了。
+在这段代码中，我们使用了 Django 提供的`slugify()`函数在没有提供`slug`字段时根据给定的图片标题自动生slug,然后，我们保存了这个对象。我们自动生成slug，这样的话用户就不用自己输入`slug`字段了。  
+
 ##**建立多对多关系**
 我们将要在 Image 模型中再添加一个字段来保存喜欢这张图片的用户。因此，我们需要一个多对多关系。因为一个用户可能喜欢很多张图片，一张图片也可能被很多用户喜欢。
 在 Image 模型中添加以下字段：
@@ -114,7 +117,8 @@ python manage.py migrate images
 ```
 Applying images.0001_initial... OK
 ```
-现在 Image 模型已经在数据库中同步了。
+现在 Image 模型已经在数据库中同步了。  
+
 ##**注册 Image 模型到管理站点中**
 编辑 `images` 应用的 `admin.py` 文件，然后像下面这样将 `Image` 模型注册到管理站点中：
 
@@ -129,8 +133,9 @@ admin.site.register(Image, ImageAdmin)
 ```
 使用命令`python manage.py runserver`打开开发服务器，在浏览器中打开`http://127.0.0.1:8000/admin/`,可以看到`Image`模型已经注册到了管理站点中：
 
-![Django-5-1][1]
-##**从其他网站上传内容**
+![Django-5-1][1]  
+
+##**从其他网站上传内容**  
 我们将使用户可以给从他们在其他网站发现的图片打上标签。用户将要提供图片的 URL ，标题，和一个可选的描述。我们的应用将要下载这幅图片，并且在数据库中创建一个新的 `Image` 对象。
 我们从新建一个用于提交图片的表单开始。在images应用的路径下创建一个 `forms.py` 文件，在这个文件中添加如下代码：
 
@@ -145,7 +150,8 @@ class ImageCreateForm(forms.ModelForm):
             'url': forms.HiddenInput,
         }
 ```
-如你所见，这是一个通过`Image`模型创建的`ModelForm`（模型表单），但是这个表单只包含了 `title`,`url`,`description`字段。我们的用户不会在表单中直接为图片添加 URL。相反的，他们将会使用一个 JavaScropt 工具来从其他网站中选择一张图片然后我们的表单将会以参数的形式接收这张图片的 URL。我们覆写 `url` 字段的默认控件（widget）为一个`HiddenInput`控件，这个控件将会被渲染为属性是 `type="hidden"`的 HTML 元素。使用这个控件是因为我们不想让用户看见这个字段。
+如你所见，这是一个通过`Image`模型创建的`ModelForm`（模型表单），但是这个表单只包含了 `title`,`url`,`description`字段。我们的用户不会在表单中直接为图片添加 URL。相反的，他们将会使用一个 JavaScropt 工具来从其他网站中选择一张图片然后我们的表单将会以参数的形式接收这张图片的 URL。我们覆写 `url` 字段的默认控件（widget）为一个`HiddenInput`控件，这个控件将会被渲染为属性是 `type="hidden"`的 HTML 元素。使用这个控件是因为我们不想让用户看见这个字段。  
+
 ##**清洁表单字段**
 （译者注：原文标题是：cleaning form fields,在数据处理中有个术语是“清洗数据”，但是这里的清洁还有“使其整洁”的含义，感觉更加符合`clean_url`这个方法的定位。）
 为了验证提供的图片 URL 是否合法，我们将检查以`.jpg`或`.jpeg`结尾的文件名，来只允许JPG文件的上传。Django允许你自定义表单方法来清洁特定的字段，通过使用以`clean_<fieldname>`形式命名的方法来实现。这个方法会在你为一个表单实例执行`is_valid()`时执行。在清洁方法中，你可以改变字段的值或者为某个特定的字段抛出错误当需要的时候，将下面这个方法添加进`ImageCreateForm`:
@@ -164,7 +170,7 @@ def clean_url(self):
  
  * 1. 我们从表单实例的`cleaned_data`字典中获取了`url`字段的值
  * 2. 我们分离了 URL 来获取文件扩展名，然后检查它是否为合法扩展名之一。如果它不是一个合法的扩展名，我们就会抛出`ValidationError`,并且表单也不会被认证。我们执行的是一个非常简单的认证。你可以使用更好的方法来验证所给的 URL 是否是一个合法的图片。
-除了验证所给的 URL， 我们还需要下载并保存图片文件。比如，我们可以使用操作表单的视图来下载图片。不过，我们将采用一个更加通用的方法 ———— 通过覆写我们模型表单中`save()`方法来完成这个任务。
+除了验证所给的 URL， 我们还需要下载并保存图片文件。比如，我们可以使用操作表单的视图来下载图片。不过，我们将采用一个更加通用的方法 ———— 通过覆写我们模型表单中`save()`方法来完成这个任务。  
 
 ##**覆写模型表单中的save()方法**
 如你所知，`ModelForm`提供了一个`save()`方法来保存目前的模型实例到数据库中，并且返回一个对象。这个方法接受一个布尔参数`commit`，这个参数允许你指定这个对象是否要被储存到数据库中。如果`commit`是`False`，`save()`方法将会返回一个模型实例但是并不会把这个对象保存到数据库中。我们将覆写表单中的`save()`方法，来下载图片然后保存它。
@@ -295,7 +301,8 @@ http://127.0.0.1:8000/images/create/?title=%20Django%20and%20Duke&url=http://upl
 ```
 你可以看到一个带有图片预览的表单，就像下面这样：
 ![Django-5-2][2]
-添加描述然后点击 **Bookmark it！**按钮。一个新的 `Image`对象将会被保存在你的数据库中。你将会得到一个错误，这个错误指示说`Image`模型没有`get_absolute_url()`方法。现在先不要担心这个，我们待会儿将添加这个方法、在你的浏览器中打开`http://127.0.0.1:8000/admin/images/image/`，确定新的图像对象已经被保存了。
+添加描述然后点击 **Bookmark it！**按钮。一个新的 `Image`对象将会被保存在你的数据库中。你将会得到一个错误，这个错误指示说`Image`模型没有`get_absolute_url()`方法。现在先不要担心这个，我们待会儿将添加这个方法、在你的浏览器中打开`http://127.0.0.1:8000/admin/images/image/`，确定新的图像对象已经被保存了。  
+
 ##**用 jQuery 创建一个书签**
 书签是一个保存在浏览器中包含 JavaScript 代码的标签，用来拓展浏览器功能。当你点击书签的时候， JavaScript 代码会在浏览器显示的网站中被执行。这是一个在和其它网站交互时非常有用的工具。
 
@@ -479,7 +486,7 @@ http://127.0.0.1:8000/images/create/?title=%20Django%20and%20Duke&url=http://upl
 如果你点击一幅图片，你将会被重定向到创建图片的页面，请求地址传递了网站的标题和被选中图片的 URL 作为 GET 参数。
 
 ![Django-5-5][5]
-恭喜！这是你的第一个 JavaScript 书签！现在它已经和你的 Django 项目成为一体！
+恭喜！这是你的第一个 JavaScript 书签！现在它已经和你的 Django 项目成为一体！  
 
 ##**为你的图片创建一个详情视图**
 我们将创建一个简单的详情视图，用于展示一张已经保存在我们的网站中的图片。打开 images 应用的`views.py`，将以下代码添加进去：
@@ -544,20 +551,22 @@ class Image(models.Model):
 >使用`{% with %}`模版标签来防止 Django 做多次查询是很有用的
 
 现在使用书签来为一张图片打上标签。在你提交图片之后你将会被重定向图片详情页面。这张图片将会包含一条提交成功的消息，效果如下：
-![Django-5-6][6]
+![Django-5-6][6]  
+
 ##**使用 sorl-thumbnail 创建缩略图**
 我们在详情页展示原图片，但是不同的图片的尺寸是不同的。一些图片源文件或许会非常大，加载他们会耗费很长时间。展示规范图片的最好方法是生成缩略图。我们将使用一个 Django 应用，叫做`sorl-thumbnail`。
 
 打开终端，用下面的命令来安装`sorl-thumbnail`：
 
 ```python
-pip install sorl-thumbnail==12.3
+pip install sorl-thumbnail
 ```
-编辑 bookmarklet 项目文件的`settings.py`,将`sorl-thumbnail`添加进`INSTALLED_APPS`.
+编辑 bookmarklet 项目文件的`settings.py`,将`sorl.thumbnail`添加进`INSTALLED_APPS`.
 
 运行下面的命令来同步你的数据库：
 
 ```python
+python manage.py makemigrations thumbnail 
 python manage.py migrate
 ```
 你看到的输出中应该包含下面这一行：

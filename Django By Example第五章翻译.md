@@ -525,7 +525,7 @@ class Image(models.Model):
 {% block content %}
     <h1>{{ image.title }}</h1>
     <img src="{{ image.image.url }}" class="image-detail">
-    {% with total_likes=image.users_like.count %}
+    {% with total_likes=image.user_like.count %}
         <div class="image-info">
                 <div>
                     <span class="count">
@@ -534,7 +534,7 @@ class Image(models.Model):
                  </div>
                  {{ image.description|linebreaks }}
         <div class="image-likes">
-            {% for user in image.users_like.all %}
+            {% for user in image.user_like.all %}
                 <div>
                     <img src="{{ user.profile.photo.url }}">
                     <p>{{ user.first_name }}</p>
@@ -607,13 +607,13 @@ def image_like(request):
         try:
             image = Image.objects.get(id=image_id)
             if action == 'like':
-                image.users_like.add(request.user)
+                image.user_like.add(request.user)
             else:
-                image.users_like.remove(request.user)
+                image.user_like.remove(request.user)
             return JsonResponse({'status':'ok'})
         except:
             pass
-    return JsonResponse({'status':'ko'})
+    return JsonResponse({'status':'ok'})
 ```
 我们在这个视图中使用了两个装饰器。 `login_required` 装饰器阻止未登录的用户连接到这个视图。`require_GET` 装饰器返回一个`HttpResponseNotAlloed`对象（状态吗：405）如果 HTTP 请求不是 GET 。这样就可以只允许 GET 请求来访问这个视图。 Django 同样也提供了`require_POST`装饰器来只允许 POST 请求，以及一个可让你传递一组请求方法作为参数的 `require_http_methods`装饰器。
 
@@ -705,7 +705,7 @@ CSRF token将会在所有的不安全 HTTP 方法的 AJAX 请求中引入，比�
 替换为：
 
 ```
-{% with total_likes=image.users_like.count users_like=image.users_like.all %}
+{% with total_likes=image.user_like.count users_like=image.user_like.all %}
 ```
 用`image-info`类属性修改`<div`元素：
 
@@ -777,13 +777,13 @@ CSRF token将会在所有的不安全 HTTP 方法的 AJAX 请求中引入，比�
  8. 我们获取接收数据的`status`属性然后检查它的值是否是`ok`。如果返回的`data`是期望中的那样，我们将切换`data-action`属性的链接和它的文本内容。这可以让用户取消这个动作。
  9. 我们基于执行的动作来增加或者减少 likes 的总数
 
-在你的浏览器中打开一张你上传的图片的详情页，你可以看到初始的 like 统计和一个 `LIKE` 按钮：
-![Django-5-7][7]
-点击**`LIKE`**按钮，你将会看见 likes 的总数上升了，按钮的文本也变成了**`UNLIKE`**：
-![Django-5-8][8]
-当你点击**`UNLIKE`**按钮时动作被执行，按钮的文本也会变成**`LIKE`**，统计的总数也会据此下降。
+在你的浏览器中打开一张你上传的图片的详情页，你可以看到初始的 like 统计和一个 `LIKE` 按钮：  
+![Django-5-7][7]  
+点击**`LIKE`**按钮，你将会看见 likes 的总数上升了，按钮的文本也变成了**`UNLIKE`**：  
+![Django-5-8][8]  
+当你点击**`UNLIKE`**按钮时动作被执行，按钮的文本也会变成**`LIKE`**，统计的总数也会据此下降。  
 
-在编写 JavaScript 时，特别是在写 AJAX 请求时， 我们建议应该使用一个类似于 Firebug 的工具来调试你的 JavaScript 脚本以及监视 CSS 和 HTML 的变化，你可以下载 Firebug ： http://getfirebug.com/。一些浏览器比如*Chrome*或者*Safari*也包含一些调试 JavaScript 的开发者工具。在那些浏览器中，你可以在网页的任何地方右键然后点击**Inspect element**来使用网页开发者工具。
+在编写 JavaScript 时，特别是在写 AJAX 请求时， 我们建议应该使用一个类似于 Firebug 的工具来调试你的 JavaScript 脚本以及监视 CSS 和 HTML 的变化，你可以下载 Firebug ： http://getfirebug.com/。一些浏览器比如*Chrome*或者*Safari*也包含一些调试 JavaScript 的开发者工具。在那些浏览器中，你可以在网页的任何地方右键然后点击**Inspect element**来使用网页开发者工具。  
 
 ##**为你的视图创建定制化的装饰器**
 我们将会限制我们的 AJAX 视图只接收由 AJAX 发起的请求。Django Request 对象提供了一个 `is_ajax()`方法， 这个方法会检查请求是否带有`XMLHttpRequest`,也就是说，会检查这个请求是否是一个 AJAX 请求。这个值被设置在`HTTP_X_REQUESTED_WITH HTTP`头中， 这个头被大多数的由JavaScript库发起的 AJAX 请求包含。

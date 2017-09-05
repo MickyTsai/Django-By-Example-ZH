@@ -257,7 +257,7 @@ Django会为所有出现在*ABSOLUTE_URL_OVERRIDES*设置中的模型（models�
         <span class="total">{{ total_followers }}</span>
         follower{{ total_followers|pluralize }}
     </span>
-    <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="followbutton">
+    <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
         {% if request.user not in user.followers.all %}
             Follow
         {% else %}
@@ -265,7 +265,7 @@ Django会为所有出现在*ABSOLUTE_URL_OVERRIDES*设置中的模型（models�
         {% endif %}
     </a>
     <div id="image-list" class="imget-container">
-        {% include "images/image/list_ajax.html" with images = user.images_create.all %}
+        {% include "images/image/list_ajax.html" with images = user.images_created.all %}
     </div>
     {% endwith %}
 {% endblock %}

@@ -208,7 +208,7 @@ Django会为所有出现在*ABSOLUTE_URL_OVERRIDES*设置中的模型（models�
          <div class="user">
             <a href="{{ user.get_absolute_url }}">
              {% thumbnail user.profile.photo "180x180" crop="100%" as im %}
-               ![]({{ im.url }})
+               <img src="{{ im.url }}">
              {% endthumbnail %}
            </a>
            <div class="info">
